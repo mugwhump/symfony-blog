@@ -32,7 +32,8 @@ class DefaultController extends Controller
     */
     public function listPosts(EntityManagerInterface $em) {
         $repository = $em->getRepository('AppBundle:Post');
-        $posts = $repository->findAll(); //TODO: sort by "Descending" order? Which way is descending?
+        $posts = $repository->findAll(); 
+        $posts = array_reverse($posts);//not sure which way is "descending" order here.
         return $posts;
     }
 
