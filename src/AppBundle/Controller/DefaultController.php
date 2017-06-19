@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-//use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use AppBundle\Entity\Post;
 
@@ -29,11 +28,11 @@ class DefaultController extends Controller
 
     /*
     * Display a list of posts
-    * @return $posts array TODO 
+    * @return $posts array 
     */
     public function listPosts(EntityManagerInterface $em) {
         $repository = $em->getRepository('AppBundle:Post');
-        $posts = $repository->findAll(); //TODO: sort by date
+        $posts = $repository->findAll(); //TODO: sort by "Descending" order? Which way is descending?
         return $posts;
     }
 
@@ -51,13 +50,12 @@ class DefaultController extends Controller
             ->add('title', TextType::class)
             ->add('email', TextType::class)
             ->add('description', TextareaType::class) 
-            //->add('date', DateType::class)
             ->add('save', SubmitType::class, array('label' => 'Create Post'))
             ->getForm();
 
         $form->handleRequest($request);
 
-        //TODO: validate emails and description length
+        //Check that submitted information is valid.
         if ($form->isSubmitted() ) {
             $post = $form->getData();
             $validator = $this->get('validator');
@@ -70,7 +68,6 @@ class DefaultController extends Controller
                 $em->persist($post);
                 $em->flush();
 
-                //return $this->redirectToRoute('task_success');
                 return new Response("Submitted post!");
             }
             else{

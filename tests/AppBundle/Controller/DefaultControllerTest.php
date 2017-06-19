@@ -13,6 +13,19 @@ class DefaultControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('Welcome to Symfony', $crawler->filter('#container h1')->text());
+        $this->assertContains('Create Post', $crawler->filter('#container h1')->text());
+    }
+
+    public function testCreatePost() {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/create');
+        $form = $crawler->selectButton('submit')->form();
+
+        // set some values
+         $form['title'] = 'Test title';
+         $form['email'] = 'Test email';
+         $form['description'] = 'Test description';
+         $crawler = $client->submit($form);
+         $this->assertContains('Submitted post!');
     }
 }
