@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <a href="{{path('create')}}" id="create-link">Create Post</a>
+    <br><br>
+    {% for post in posts %}
+        <div class="post">
+            <div class="title">{{post.title}}</div>
+            <div class="email>">{{post.email}}</div>
+            <div class="description">{{post.description}}</div>
+        </div>
+        <br>
+    {% endfor %}
+
+
+{% endblock %}
