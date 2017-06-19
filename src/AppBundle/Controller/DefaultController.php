@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+//use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use AppBundle\Entity\Post;
 
@@ -21,9 +21,9 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request, EntityManagerInterface $em)
     {
-        return $this->listPosts($em);
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+        $posts = $this->listPosts($em);
+        return $this->render('default/home.html.twig', [
+            'posts' => $posts,
         ]);
     }
 
@@ -34,14 +34,14 @@ class DefaultController extends Controller
     public function listPosts(EntityManagerInterface $em) {
         $repository = $em->getRepository('AppBundle:Post');
         $posts = $repository->findAll(); //TODO: sort by date
-        return new Response(print_r($posts,true));
+        return $posts;
     }
 
 
     /**
      * Page for user to submit a post.
      * TODO: extract form to a class
-     * @Route("/create")
+     * @Route("/create", name="create")
      */
     public function createAction(Request $request, EntityManagerInterface $em){
         $post = new Post();
@@ -51,7 +51,7 @@ class DefaultController extends Controller
             ->add('title', TextType::class)
             ->add('email', TextType::class)
             ->add('description', TextareaType::class) 
-            ->add('date', DateType::class)//TODO: fill automatically
+            //->add('date', DateType::class)
             ->add('save', SubmitType::class, array('label' => 'Create Post'))
             ->getForm();
 
@@ -61,6 +61,7 @@ class DefaultController extends Controller
         if ($form->isSubmitted() ) {
             if($form->isValid()){
                 $post = $form->getData();
+                $post->setDate(new \DateTime('now'));
 
                 // save post to db
                 $em->persist($post);
