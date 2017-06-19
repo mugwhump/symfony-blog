@@ -59,8 +59,11 @@ class DefaultController extends Controller
 
         //TODO: validate emails and description length
         if ($form->isSubmitted() ) {
-            if($form->isValid()){
-                $post = $form->getData();
+            $post = $form->getData();
+            $validator = $this->get('validator');
+            $errors = $validator->validate($post);
+
+            if (count($errors) == 0) {
                 $post->setDate(new \DateTime('now'));
 
                 // save post to db
@@ -71,7 +74,9 @@ class DefaultController extends Controller
                 return new Response("Submitted post!");
             }
             else{
-                return new Response("Not valid!");
+                $errorString = (string) $errors;
+                $url = $this->generateUrl('create');
+                return new Response("Error: $errorString<br><a href='$url'>Go Back</a>");
             }
         }
 
